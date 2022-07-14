@@ -1,0 +1,54 @@
+---
+_schema-version: "3.1"
+ID: ib-nexus
+version: 1.0.0
+description: "A simple CAP project."
+parameters:
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm ci
+        - mv db/data/md.BusinessPartners.csv .
+        - mv db/data/md.OutputTypes.csv .
+        - npx -p @sap/cds-dk cds build --production
+        - mv md.BusinessPartners.csv db/data
+        - mv md.OutputTypes.csv db/data
+        - npm run build
+        - cp -r app/nexus/dist gen/srv/app
+
+modules:
+  - name: ib-nexus-srv
+    type: nodejs
+    path: gen/srv
+    properties:
+      DEFAULT_URL: ${default-url}
+    parameters:
+      buildpack: nodejs_buildpack
+      host: ib-nexus-srv-${space}
+    build-parameters:
+      builder: npm-ci
+    provides:
+      - name: srv-api # required by consumers of CAP services (e.g. approuter)
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: ib-nexus-db
+
+  - name: ib-nexus-db-deployer
+    type: hdb
+    path: gen/db
+    parameters:
+      buildpack: nodejs_buildpack
+    requires:
+      - name: ib-nexus-db
+
+resources:
+  - name: ib-nexus-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+    properties:
+      hdi-service-name: ${service-name}

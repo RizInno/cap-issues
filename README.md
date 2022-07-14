@@ -1,0 +1,3 @@
+# Communication Nexus
+
+The idea of the communication nexus is to be the clearing house for system messages to the outside world. Take a utility company as an example. Utilities have SAP systems, outage management system and billing systems to name a few. All of them communicate with a customer. As a customer, I want to have the freedom though to decide how I receive what message (type). I personally would like to receive urgent information via text message and all other stuff via email. So I want to be able to specify that [message types](./db/data/md.MessageTypes.csv) 2 or 3 are routed through the SMS [Output Channel](./db/data/md.OutputChannels.csv), all other message types should be routed through email. 
