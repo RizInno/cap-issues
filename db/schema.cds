@@ -24,12 +24,24 @@ context md {
 
     @assert.unique : {OutputTypes : [
         BusinessPartner,
-        OutputChannel
+        MessageType
     ]}
     entity OutputTypes : cuid, managed {
         BusinessPartner : Association to BusinessPartners;
         @mandatory
-        OutputChannel   : Association to one OutputChannels;
+        MessageType     : Association to one MessageTypes;
+        OutputChannels  : Composition of many MessageOutputChannels
+                              on OutputChannels.OutputType = $self;
+    }
+
+    @assert.unique : {OutputChannels : [
+        OutputType,
+        OutputChannel
+    ]}
+    entity MessageOutputChannels : cuid, managed {
+        OutputType    : Association to one OutputTypes;
+        @mandatory
+        OutputChannel : Association to one OutputChannels;
     }
 
     entity MessageTypes {

@@ -49,8 +49,8 @@ annotate CommunicationNexus.BusinessPartners with @(
             },
             {
                 $Type  : 'UI.ReferenceFacet',
-                ID     : 'OutputTypes',
-                Label  : '{i18n>outputTypes}',
+                ID     : 'MessageTypes',
+                Label  : '{i18n>messageTypes}',
                 Target : 'OutputTypes/@UI.LineItem'
             }
         ],
@@ -67,6 +67,7 @@ annotate CommunicationNexus.BusinessPartners with @(
         ]}
     }
 ) {
+    ID             @(UI : {Hidden});
     name           @(title : '{i18n>name}');
     email          @(title : '{i18n>email}');
     phone          @(title : '{i18n>phone}');
@@ -80,11 +81,62 @@ annotate CommunicationNexus.BusinessPartners with @(
     }
 };
 
-annotate CommunicationNexus.OutputTypes with @(UI : {LineItem : [
+annotate CommunicationNexus.OutputTypes with @(UI : {
+
+    LineItem   : [
+        {Value : MessageType_ID},
+        {Value : createdBy},
+        {Value : createdAt}
+    ],
+
+    /**
+     * Object Page
+     */
+
+    HeaderInfo : {
+        $Type          : 'UI.HeaderInfoType',
+        TypeName       : '{i18n>messageType}',
+        TypeNamePlural : '{i18n>messageTypes}',
+        Title          : {Value : MessageType.name}
+    },
+    Facets     : [{
+        $Type  : 'UI.ReferenceFacet',
+        ID     : 'OutputChannels',
+        Label  : '{i18n>outputChannels}',
+        Target : 'OutputChannels/@UI.LineItem'
+    }]
+}) {
+    ID              @(UI : {Hidden});
+    BusinessPartner @(UI : {Hidden});
+    MessageType
+                    @(
+        title  : '{i18n>messageType}',
+        Common : {
+            Text      : {
+                $value                 : MessageType.name,
+                ![@UI.TextArrangement] : #TextOnly
+            },
+            ValueList : {
+                $Type          : 'Common.ValueListType',
+                CollectionPath : 'VH_MessageTypes',
+                Label          : '{i18n>messageTypes}',
+                Parameters     : [{
+                    $Type             : 'Common.ValueListParameterInOut',
+                    LocalDataProperty : MessageType_ID,
+                    ValueListProperty : 'ID'
+                }]
+            }
+        }
+    );
+};
+
+annotate CommunicationNexus.MessageOutputChannels with @(UI : {LineItem : [
     {Value : OutputChannel_ID},
     {Value : createdBy},
     {Value : createdAt}
 ]}) {
+    ID            @(UI : {Hidden});
+    OutputType    @(UI : {Hidden});
     OutputChannel @(
         title  : '{i18n>outputChannel}',
         Common : {
@@ -104,6 +156,17 @@ annotate CommunicationNexus.OutputTypes with @(UI : {LineItem : [
             }
         }
     );
+};
+
+
+annotate CommunicationNexus.VH_MessageTypes with {
+    ID @(
+        title  : '{i18n>name}',
+        Common : {Text : {
+            $value                 : name,
+            ![@UI.TextArrangement] : #TextOnly
+        }}
+    )
 };
 
 annotate CommunicationNexus.VH_OutputChannels with {

@@ -50,7 +50,8 @@
 			"minUI5Version": "1.102.1",
 			"libs": {
 				"sap.ui.core": {},
-				"sap.fe.templates": {}
+				"sap.fe.templates": {},
+				"sap.f": {}
 			}
 		},
 		"models": {
@@ -73,17 +74,44 @@
 				}
 			}
 		},
+		"rootView": {
+			"viewName": "sap.fe.templates.RootContainer.view.Fcl",
+			"type": "XML",
+			"async": true,
+			"id": "appRootView"
+		},
 		"routing": {
+			"config": {
+				"routerClass": "sap.f.routing.Router",
+				"flexibleColumnLayout": {
+					"defaultTwoColumnLayoutType": "TwoColumnsMidExpanded",
+					"defaultThreeColumnLayoutType": "ThreeColumnsMidExpanded"
+				}
+			},
 			"routes": [
 				{
 					"pattern": ":?query:",
 					"name": "BusinessPartnersList",
-					"target": "BusinessPartnersList"
+					"target": [
+						"BusinessPartnersList"
+					]
 				},
 				{
 					"pattern": "BusinessPartners({key}):?query:",
 					"name": "BusinessPartnersObjectPage",
-					"target": "BusinessPartnersObjectPage"
+					"target": [
+						"BusinessPartnersList",
+						"BusinessPartnersObjectPage"
+					]
+				},
+				{
+					"pattern": "BusinessPartners({key})/OutputTypes({key2}):?query:",
+					"name": "MessageTypesObjectPage",
+					"target": [
+						"BusinessPartnersList",
+						"BusinessPartnersObjectPage",
+						"MessageTypesObjectPage"
+					]
 				}
 			],
 			"targets": {
@@ -103,7 +131,9 @@
 								}
 							}
 						}
-					}
+					},
+					"controlAggregation": "beginColumnPages",
+					"contextPattern": ""
 				},
 				"BusinessPartnersObjectPage": {
 					"type": "Component",
@@ -112,9 +142,40 @@
 					"options": {
 						"settings": {
 							"editableHeaderContent": true,
-							"entitySet": "BusinessPartners"
+							"entitySet": "BusinessPartners",
+							"navigation": {
+								"OutputTypes": {
+									"detail": {
+										"route": "MessageTypesObjectPage"
+									}
+								}
+							}
+						},
+						"controlConfiguration": {
+							"OutputTypes/@com.sap.vocabularies.UI.v1.LineItem": {
+								"tableSettings": {
+									"creationMode": {
+										"name": "Inline"
+									}
+								}
+							}
 						}
-					}
+					},
+					"controlAggregation": "midColumnPages",
+					"contextPattern": "/BusinessPartners({key})"
+				},
+				"MessageTypesObjectPage": {
+					"type": "Component",
+					"id": "MessageTypesObjectPage",
+					"name": "sap.fe.templates.ObjectPage",
+					"options": {
+						"settings": {
+							"editableHeaderContent": false,
+							"entitySet": "OutputTypes"
+						}
+					},
+					"controlAggregation": "endColumnPages",
+					"contextPattern": "/BusinessPartners({key})/OutputTypes({key2})"
 				}
 			}
 		},

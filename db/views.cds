@@ -5,6 +5,9 @@ context view {
     entity BusinessPartnerOutputs as
         select from md.BusinessPartners {
             *,
-            OutputTypes.OutputChannel.ID as outputChannelId
+            OutputTypes.MessageType.ID                  as messageTypeId,
+            OutputTypes.OutputChannels.OutputChannel.ID as outputChannelId
         }
+        where
+            OutputTypes.OutputChannels.ID is not null
 }

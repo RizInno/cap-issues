@@ -3,17 +3,23 @@ using {md} from '../db/schema';
 service CommunicationNexus {
 
     @odata.draft.enabled
-    entity BusinessPartners  as projection on md.BusinessPartners;
+    entity BusinessPartners      as projection on md.BusinessPartners;
 
-    entity OutputTypes       as projection on md.OutputTypes;
+    entity OutputTypes           as projection on md.OutputTypes;
+    entity MessageOutputChannels as projection on md.MessageOutputChannels;
 
     @readonly
-    entity VH_OutputChannels as projection on md.OutputChannels;
+    entity VH_MessageTypes       as projection on md.MessageTypes;
+
+    @readonly
+    entity VH_OutputChannels     as projection on md.OutputChannels;
 
     type Recipients : String(50);
 
     type Input : {
         message          : String;
+        @mandatory
+        messageType      : String;
         @mandatory
         recipients       : many {
             ID           : UUID;
